@@ -65,6 +65,7 @@
 
 
 ;; use it. e.g.
+
 (insert-elem [:mpood "Miniature Poodle"] :before #(= :myt (elem-key %)) dict)
 
 
@@ -93,6 +94,7 @@
 
 
 ;; use it. e.g.
+
 (remove-elems #(= :lhc (first %)) dict)
 
 (remove-elems attrs? dict)
@@ -124,10 +126,6 @@
 
 ;; ****************************************************************
 ;; 4. filtering elements
-
-;; utility functions
-
-
 
 
 (defn filter-elems
