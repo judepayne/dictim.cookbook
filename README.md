@@ -1,5 +1,7 @@
 ## A cookbook for dictim
 
+Recipes for using [dictim.](https://github.com/judepayne/dictim)
+
 Please see the code for the recipes!
 
 
