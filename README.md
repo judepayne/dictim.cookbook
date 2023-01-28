@@ -8,6 +8,8 @@ Please see the code for the recipes!
 | Recipe | Description |
 |----------|------------|
 | recipe1 | insertion, deletion, update and filter operations on dictim |
+| recipe2 | generating architecture diagrams with dummy data |
+
 
 
 

@@ -21,7 +21,7 @@
    [:dogs "All Dogs"
     [:toy-dogs "Handbag rats"
      [:myt "Miniature Yorkshire Terrier"]
-     [:lhc "Long haired Chihuahua"]
+     [:lhc "Long haired Chihuahua" {:style {:fill "red"}}]
      [:myt "->" :lhc "Equally terrible"]]
     [:large-dogs "Large breeds"
      [:gshep "German Shepherd"]]]

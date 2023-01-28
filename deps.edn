@@ -1,3 +1,4 @@
 {:paths ["src"]
  :deps {org.clojure/clojure        {:mvn/version "1.11.1"}
-        dictim/dictim              {:local/root "../dictim"}}}
+        dictim/dictim              {:local/root "../dictim"}
+        graphdict/graphdict        {:local/root "../graphdict"}}}
