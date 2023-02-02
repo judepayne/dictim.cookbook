@@ -94,16 +94,19 @@
 
 ;; For that diagram spec, let's build a function to handle it
 
-(defn arch-diagram->d2
-  [spec]
-  (let [transform-fn (or (-> spec :transform-fn) identity)
-        data (transform-fn (-> spec :data))]
-    (let [nodes (->> (-> data :apps)
-                     (filter (or (-> spec :filters :app-filter-fn) identity)))
-          edges (->> (-> data :flows)
-                     (filter (or (-> spec :filters :flow-filter-fn) identity)))
-          dictim ((-> spec :dictim-fn) nodes edges (-> spec :dictim-fn-params))]
-      (spit (-> spec :file-out) (apply c/d2 dictim)))))
+(defn template->d2
+  ([spec] (template->d2 spec :apps :flows))
+  ([spec node-key edge-key]
+   (let [transform-fn (or (-> spec :transform-fn) identity)
+         data (transform-fn (-> spec :data))]
+     (let [nodes (->> (-> data node-key)
+                      (filter (or (-> spec :filters :app-filter-fn) identity)))
+           edges (->> (-> data edge-key)
+                      (filter (or (-> spec :filters :flow-filter-fn) identity)))
+           directives (-> spec :directives)
+           dictim ((-> spec :dictim-fn) nodes edges (-> spec :dictim-fn-params))
+           dictim' (if directives (cons directives dictim) dictim)]
+       (spit (-> spec :file-out) (apply c/d2 dictim'))))))
 
 
 ;; let's define a path to write the .d2 files out to:
@@ -123,18 +126,17 @@
 (def data (atom {}))
 
 
+
 ;; Generate some random diagrams, over and over.
 (let [apps (take 10 (apps))
       flows (take 12 (flows apps))]
   (reset! data {:apps apps :flows flows})
-  (arch-diagram->d2
+  (template->d2
    {:data {:apps apps
            :flows flows }
     :filters {:filter-fn identity
               :app-filter-fn identity
-              :flow-filter-fn identity #_(contains?
-                                          #{"trades" "positions" "quotes"}
-                                          (:data-type %)) }
+              :flow-filter-fn identity}
     :dictim-fn g/graph->dictim
     :dictim-fn-params {:node->key (fn [n] (str (:id n)))
                        :node->attrs (fn [n] {:label (str (:name n))})
@@ -149,7 +151,7 @@
 (declare small-data)
 
 
-(arch-diagram->d2
+(template->d2
  {:data small-data
   :filters {:app-filter-fn identity
             :flow-filter-fn identity}
@@ -165,7 +167,7 @@
 ;; highlight apps that participate in various functions..
 ;; pink = Pricing, green = Quoting, oragne = Order Mgt
 
-(arch-diagram->d2
+(template->d2
  {:data small-data
   :filters {:app-filter-fn identity
             :flow-filter-fn identity}
@@ -191,14 +193,14 @@
 
 ;; Highlight flows of 'Client Master' data
 
-(arch-diagram->d2
+(template->d2
  {:data small-data
   :filters {:app-filter-fn identity
             :flow-filter-fn identity}
   :dictim-fn g/graph->dictim
   :dictim-fn-params {:node->key :id
                      :node->attrs (fn [n] {:label (str (:name n))
-                                           :style (cond
+                                           #_:style #_(cond
                                                       (has? (:functions n) ["Pricing"])
                                                       {:fill "pink"}
 
@@ -213,8 +215,8 @@
                                            :style (cond
                                                     (= "client master" (:data-type e))
                                                     {:stroke-dash "4"
-                                                     :animated "true"
-                                                     :stroke "brown"
+                                                     :animated "false"
+                                                     :stroke "red"
                                                      :stroke-width 2}
 
                                                     :else {})})
@@ -264,7 +266,7 @@
 
 
 ;; filter down to just Securities and Equities
-(arch-diagram->d2
+(template->d2
  {:data small-data
   :transform-fn (zoom :dept false "Securities" "Equities")
   :filters {:app-filter-fn identity
@@ -298,7 +300,7 @@
 
 
 ;; filter down to just Securities, but show anything that has a direct input or output with Securities
-(arch-diagram->d2
+(template->d2
  {:data small-data
   :transform-fn (zoom :dept true "Securities")
   :filters {:app-filter-fn identity
@@ -321,8 +323,8 @@
                                            :style (cond
                                                     (= "client master" (:data-type e))
                                                     {:stroke-dash "3"
-                                                     :animated "false"
-                                                     :stroke "brown"}
+                                                     :animated "true"
+                                                     :stroke "blue"}
 
                                                     :else {})})
                      :node->cluster :dept
@@ -331,7 +333,7 @@
 
 
 ;; same as before but group differently and fmt the edge apps differently
-(arch-diagram->d2
+(template->d2
  {:data small-data
   :transform-fn (zoom :dept true "Finance" "Equities" "Corporate")
   :filters {:app-filter-fn identity
@@ -384,7 +386,7 @@
 
 ;; Let's 'group' the same data a different way -> by business process
 
-(arch-diagram->d2
+(template->d2
  {:data small-data
   :filters {:app-filter-fn identity
             :flow-filter-fn #(= "client master" (:data-type %))}
@@ -428,7 +430,7 @@
    "Oona"})
 
 
-(arch-diagram->d2
+(template->d2
  {:data small-data
   :filters {:app-filter-fn identity
             :flow-filter-fn identity}
@@ -446,7 +448,7 @@
 (declare big-data)
 
 
-(arch-diagram->d2
+(template->d2
  {:data big-data
   :filters {:app-filter-fn identity
             :flow-filter-fn identity}
@@ -498,7 +500,7 @@
 (def tco-map (partial heatmap 0 2000000))
 
 
-(arch-diagram->d2
+(template->d2
  (let [k :dept
        vs '("Equities")]
    {:data big-data
@@ -549,7 +551,54 @@
 ;; *********************************************************************************
 
 
+(def use-cases
+  {:nodes
+   '({:case :a :id :db_a :name "Metadata DBS"}
+     {:case :a :id :mt_a :name "Middle tier"}
+     {:case :a :id :tp_a :name "transpiler"}
+     {:case :a :id :gui_a :name "browser"}
+     {:case :a :id :user_a :name "User"}
+     
+     {:case :b :id :db_b :name "Metadata DB"}
+     {:case :b :id :mt_b :name "Middle tier"}
+     {:case :b :id :tp_b :name "transpiler"}
+     {:case :b :id :gui_b :name "Terrastruct gui"}
+     {:case :b :id :user_b :name "User"})
+   :edges
+   '({:src :db_a :dest :mt_a :label "query data"}
+     {:src :mt_a :dest :tp_a :label "data"}
+     {:src :tp_a :dest :gui_a :label "d2"}
+     {:src :gui_a :dest :user_a :label "view diagram"}
+     
+     {:src :db_b :dest :mt_b :label "query data"}
+     {:src :mt_b :dest :tp_b :label "data"}
+     {:src :tp_b :dest :gui_b :label "d2"}
+     {:src :gui_b :dest :user_b :label "view & edit diagram"}
+     {:src :user_b :dest :gui_b :label "update d2"}
+     {:src :gui_b :dest :tp_b :label "updated d2"}
+     {:src :tp_b :dest :mt_b :label "updated data"}
+     {:src :mt_b :dest :db_b :label "store updated data"})})
 
+
+;; example diagram - the proposed flow
+(template->d2
+ {:data use-cases
+  :directives {:direction "right"}
+  :dictim-fn g/graph->dictim
+  :dictim-fn-params {:node->key :id
+                     :node->attrs (fn [n] {:label (:name n)
+                                           :shape (case (:id n)
+                                                    :user_a "person"
+                                                    :user_b "person"
+                                                    "rectangle")})
+                     :edge->attrs (fn [e] {:label (:label e)})
+                     :node->cluster (fn [n] (:case n))
+                     :cluster->attrs (fn [c] (case c
+                                               :a {:label "Dynamic View"}
+                                               :b {:label "View and edit"}))}
+  :file-out path}
+ :nodes
+ :edges)
 
 
 (def small-data
