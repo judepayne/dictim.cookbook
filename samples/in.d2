@@ -1,0 +1,47 @@
+direction: right
+a: Dynamic View  {
+  db_a: Metadata DBS  {
+    shape: rectangle
+  }
+  mt_a: Middle tier  {
+    shape: rectangle
+  }
+  tp_a: transpiler  {
+    shape: rectangle
+  }
+  gui_a: browser  {
+    shape: rectangle
+  }
+  user_a: User  {
+    shape: person
+  }
+}
+b: View and edit  {
+  db_b: Metadata DB  {
+    shape: rectangle
+  }
+  mt_b: Middle tier  {
+    shape: rectangle
+  }
+  tp_b: transpiler  {
+    shape: rectangle
+  }
+  gui_b: Terrastruct gui  {
+    shape: rectangle
+  }
+  user_b: User  {
+    shape: person
+  }
+}
+a.db_a -> a.mt_a: query data
+a.mt_a -> a.tp_a: data
+a.tp_a -> a.gui_a: d2
+a.gui_a -> a.user_a: view diagram
+b.db_b -> b.mt_b: query data
+b.mt_b -> b.tp_b: data
+b.tp_b -> b.gui_b: d2
+b.gui_b -> b.user_b: view & edit diagram
+b.user_b -> b.gui_b: update d2
+b.gui_b -> b.tp_b: updated d2
+b.tp_b -> b.mt_b: updated data
+b.mt_b -> b.db_b: store updated data

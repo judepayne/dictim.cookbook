@@ -1,0 +1,119 @@
+digraph  {
+  splines="ortho";
+  fontname="trebuchet MS";
+  fontsize="8";
+  nodesep="0.8";
+  ranksep="0.9";
+  concentrate="true";
+  rankdir="TB";
+  compound="true";
+  subgraph cluster_bank  {
+    style="filled";
+    color="#384896";
+    penwidth="0.7";
+    fillcolor="#e3eafc";
+    label="bank";
+    subgraph cluster_Risk  {
+      style="filled";
+      color="#384896";
+      penwidth="0.7";
+      fillcolor="#ebf0fc";
+      label="Risk";
+      app14155[shape="rectangle",fontname="trebuchet MS",fontsize="8",color="#384896",penwidth="0.7",label="Risk Sheet"];
+      app14156[shape="rectangle",fontname="trebuchet MS",fontsize="8",color="#384896",penwidth="0.7",label="Data sky"];
+    }
+    subgraph cluster_Securities  {
+      style="filled";
+      color="#384896";
+      penwidth="0.7";
+      fillcolor="#ebf0fc";
+      label="Securities";
+      app14147[shape="rectangle",fontname="trebuchet MS",fontsize="8",color="#384896",penwidth="0.7",label="ARC3"];
+      app14151[shape="rectangle",fontname="trebuchet MS",fontsize="8",color="#384896",penwidth="0.7",label="Booking Flash"];
+      app14154[shape="rectangle",fontname="trebuchet MS",fontsize="8",color="#384896",penwidth="0.7",label="Data Solar"];
+    }
+    subgraph cluster_Equities  {
+      style="filled";
+      color="#384896";
+      penwidth="0.7";
+      fillcolor="#ebf0fc";
+      label="Equities";
+      app14150[shape="rectangle",fontname="trebuchet MS",fontsize="8",color="#384896",penwidth="0.7",label="Flame minor"];
+    }
+    subgraph cluster_Corporate  {
+      style="filled";
+      color="#384896";
+      penwidth="0.7";
+      fillcolor="#ebf0fc";
+      label="Corporate";
+      app14153[shape="rectangle",fontname="trebuchet MS",fontsize="8",color="#384896",penwidth="0.7",label="ARC3"];
+    }
+    subgraph cluster_Funds  {
+      style="filled";
+      color="#384896";
+      penwidth="0.7";
+      fillcolor="#ebf0fc";
+      label="Funds";
+      app14149[shape="rectangle",fontname="trebuchet MS",fontsize="8",color="#384896",penwidth="0.7",label="Data Solar"];
+    }
+    subgraph cluster_Finance  {
+      style="filled";
+      color="#384896";
+      penwidth="0.7";
+      fillcolor="#ebf0fc";
+      label="Finance";
+      app14148[shape="rectangle",fontname="trebuchet MS",fontsize="8",color="#384896",penwidth="0.7",label="Flame"];
+      app14152[shape="rectangle",fontname="trebuchet MS",fontsize="8",color="#384896",penwidth="0.7",label="Book Relay"];
+    }
+  }
+  app14152 -> app14148 [xlabel="positions",fontsize="6",color="#384896",fontname="trebuchet MS italic",fontcolor="#656565",arrowsize="0.5",penwidth="0.6",constraint="true"];
+  app14155 -> app14153 [xlabel="client master",fontsize="6",color="#384896",fontname="trebuchet MS italic",fontcolor="#656565",arrowsize="0.5",penwidth="0.6",constraint="true"];
+  app14147 -> app14149 [xlabel="trades",fontsize="6",color="#384896",fontname="trebuchet MS italic",fontcolor="#656565",arrowsize="0.5",penwidth="0.6",constraint="true"];
+  app14154 -> app14149 [xlabel="client master",fontsize="6",color="#384896",fontname="trebuchet MS italic",fontcolor="#656565",arrowsize="0.5",penwidth="0.6",constraint="true"];
+  app14155 -> app14148 [xlabel="client master",fontsize="6",color="#384896",fontname="trebuchet MS italic",fontcolor="#656565",arrowsize="0.5",penwidth="0.6",constraint="true"];
+  app14153 -> app14151 [xlabel="quotes",fontsize="6",color="#384896",fontname="trebuchet MS italic",fontcolor="#656565",arrowsize="0.5",penwidth="0.6",constraint="true"];
+  app14156 -> app14152 [xlabel="client master",fontsize="6",color="#384896",fontname="trebuchet MS italic",fontcolor="#656565",arrowsize="0.5",penwidth="0.6",constraint="true"];
+  app14151 -> app14150 [xlabel="trades",fontsize="6",color="#384896",fontname="trebuchet MS italic",fontcolor="#656565",arrowsize="0.5",penwidth="0.6",constraint="true"];
+  app14155 -> app14147 [xlabel="client master",fontsize="6",color="#384896",fontname="trebuchet MS italic",fontcolor="#656565",arrowsize="0.5",penwidth="0.6",constraint="true"];
+  app14152 -> app14152 [xlabel="instructions",fontsize="6",color="#384896",fontname="trebuchet MS italic",fontcolor="#656565",arrowsize="0.5",penwidth="0.6",constraint="true"];
+  app14155 -> app14147 [xlabel="client master",fontsize="6",color="#384896",fontname="trebuchet MS italic",fontcolor="#656565",arrowsize="0.5",penwidth="0.6",constraint="true"];
+  app14150 -> app14152 [xlabel="quotes",fontsize="6",color="#384896",fontname="trebuchet MS italic",fontcolor="#656565",arrowsize="0.5",penwidth="0.6",constraint="true"];
+  app14154 -> app14150 [xlabel="positions",fontsize="6",color="#384896",fontname="trebuchet MS italic",fontcolor="#656565",arrowsize="0.5",penwidth="0.6",constraint="true"];
+  app14151 -> app14155 [xlabel="quotes",fontsize="6",color="#384896",fontname="trebuchet MS italic",fontcolor="#656565",arrowsize="0.5",penwidth="0.6",constraint="true"];
+  app14147 -> app14147 [xlabel="allocations",fontsize="6",color="#384896",fontname="trebuchet MS italic",fontcolor="#656565",arrowsize="0.5",penwidth="0.6",constraint="true"];
+  app14151 -> app14155 [ltail="cluster_Securities",lhead="cluster_Risk",color="#222222",penwidth="2",weight="10",style="invis"];
+  app14154 -> app14149 [ltail="cluster_Securities",lhead="cluster_Funds",color="#222222",penwidth="2",weight="10",style="invis"];
+  app14147 -> app14150 [ltail="cluster_Securities",lhead="cluster_Equities",color="#222222",penwidth="2",weight="10",style="invis"];
+  app14156 -> app14148 [ltail="cluster_Risk",lhead="cluster_Finance",color="#222222",penwidth="2",weight="10",style="invis"];
+  app14149 -> app14148 [ltail="cluster_Funds",lhead="cluster_Finance",color="#222222",penwidth="2",weight="10",style="invis"];
+  app14150 -> app14152 [ltail="cluster_Equities",lhead="cluster_Finance",color="#222222",penwidth="2",weight="10",style="invis"];
+  app14148 -> app14153 [ltail="cluster_Finance",lhead="cluster_Corporate",color="#222222",penwidth="2",weight="10",style="invis"];
+  app14147 -> app14156 [ltail="cluster_Securities",lhead="cluster_Risk",color="#222222",penwidth="2",weight="10",style="invis"];
+  app14147 -> app14149 [ltail="cluster_Securities",lhead="cluster_Funds",color="#222222",penwidth="2",weight="10",style="invis"];
+  app14154 -> app14150 [ltail="cluster_Securities",lhead="cluster_Equities",color="#222222",penwidth="2",weight="10",style="invis"];
+  app14156 -> app14152 [ltail="cluster_Risk",lhead="cluster_Finance",color="#222222",penwidth="2",weight="10",style="invis"];
+  app14149 -> app14148 [ltail="cluster_Funds",lhead="cluster_Finance",color="#222222",penwidth="2",weight="10",style="invis"];
+  app14150 -> app14152 [ltail="cluster_Equities",lhead="cluster_Finance",color="#222222",penwidth="2",weight="10",style="invis"];
+  app14152 -> app14153 [ltail="cluster_Finance",lhead="cluster_Corporate",color="#222222",penwidth="2",weight="10",style="invis"];
+  app14154 -> app14155 [ltail="cluster_Securities",lhead="cluster_Risk",color="#222222",penwidth="2",weight="10",style="invis"];
+  app14151 -> app14149 [ltail="cluster_Securities",lhead="cluster_Funds",color="#222222",penwidth="2",weight="10",style="invis"];
+  app14147 -> app14150 [ltail="cluster_Securities",lhead="cluster_Equities",color="#222222",penwidth="2",weight="10",style="invis"];
+  app14156 -> app14148 [ltail="cluster_Risk",lhead="cluster_Finance",color="#222222",penwidth="2",weight="10",style="invis"];
+  app14149 -> app14148 [ltail="cluster_Funds",lhead="cluster_Finance",color="#222222",penwidth="2",weight="10",style="invis"];
+  app14150 -> app14152 [ltail="cluster_Equities",lhead="cluster_Finance",color="#222222",penwidth="2",weight="10",style="invis"];
+  app14152 -> app14153 [ltail="cluster_Finance",lhead="cluster_Corporate",color="#222222",penwidth="2",weight="10",style="invis"];
+  app14147 -> app14156 [ltail="cluster_Securities",lhead="cluster_Risk",color="#222222",penwidth="2",weight="10",style="invis"];
+  app14147 -> app14149 [ltail="cluster_Securities",lhead="cluster_Funds",color="#222222",penwidth="2",weight="10",style="invis"];
+  app14151 -> app14150 [ltail="cluster_Securities",lhead="cluster_Equities",color="#222222",penwidth="2",weight="10",style="invis"];
+  app14155 -> app14148 [ltail="cluster_Risk",lhead="cluster_Finance",color="#222222",penwidth="2",weight="10",style="invis"];
+  app14149 -> app14152 [ltail="cluster_Funds",lhead="cluster_Finance",color="#222222",penwidth="2",weight="10",style="invis"];
+  app14150 -> app14152 [ltail="cluster_Equities",lhead="cluster_Finance",color="#222222",penwidth="2",weight="10",style="invis"];
+  app14152 -> app14153 [ltail="cluster_Finance",lhead="cluster_Corporate",color="#222222",penwidth="2",weight="10",style="invis"];
+  app14151 -> app14156 [ltail="cluster_Securities",lhead="cluster_Risk",color="#222222",penwidth="2",weight="10",style="invis"];
+  app14154 -> app14149 [ltail="cluster_Securities",lhead="cluster_Funds",color="#222222",penwidth="2",weight="10",style="invis"];
+  app14154 -> app14150 [ltail="cluster_Securities",lhead="cluster_Equities",color="#222222",penwidth="2",weight="10",style="invis"];
+  app14156 -> app14148 [ltail="cluster_Risk",lhead="cluster_Finance",color="#222222",penwidth="2",weight="10",style="invis"];
+  app14149 -> app14152 [ltail="cluster_Funds",lhead="cluster_Finance",color="#222222",penwidth="2",weight="10",style="invis"];
+  app14150 -> app14152 [ltail="cluster_Equities",lhead="cluster_Finance",color="#222222",penwidth="2",weight="10",style="invis"];
+  app14152 -> app14153 [ltail="cluster_Finance",lhead="cluster_Corporate",color="#222222",penwidth="2",weight="10",style="invis"];
+}
