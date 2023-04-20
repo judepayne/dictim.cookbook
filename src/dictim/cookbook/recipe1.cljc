@@ -1,5 +1,5 @@
 (ns dictim.cookbook.recipe1
-  (:require [dictim.utils :refer [elem-key ctr? shape? cmt? conn? attrs?]]))
+  (:require [dictim.utils :refer [ctr? shape? cmt? conn? attrs?]]))
 
 ;; ****************************************************************
 ;; *                        Recipe 1                              *
@@ -44,6 +44,18 @@
     (let [[c es] (ctr-split e)] (into (vec c) (f es)))))
 
 
+;; Functions to match specified keys and labels
+;; return 'matcher functions'
+
+(defn match-key [k]
+  (fn [elem]
+    (= k (first elem))))
+
+
+(defn match-label [l]
+  (fn [elem]
+    (= l (second elem))))
+
 
 ;; works over every element in the tree checking for a match.
 
@@ -66,13 +78,13 @@
 
 ;; use it. e.g.
 
-(insert-elem [:mpood "Miniature Poodle"] :before #(= :myt (elem-key %)) dict)
+(insert-elem [:mpood "Miniature Poodle"] :before (match-key :myt) dict)
 
 
 (insert-elem
  [:working-dogs "Working Breeds"
   [:wcs "Working Cocker Spaniel"]]
- :after #(= "Handbag rats" (second %)) dict)
+ :after (match-label "Handbag rats") dict)
 
 
 
