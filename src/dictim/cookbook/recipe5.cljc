@@ -413,9 +413,6 @@
     :else true))
 
 
-;; rewrite a la Rhizome
-
-
 (defn network-diagram->d2
   "Takes a diagram spec and produces d2.
    A diagram spec is a map which must have keys:

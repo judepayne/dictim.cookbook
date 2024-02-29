@@ -1,4 +1,4 @@
 {:paths ["src"]
- :deps {org.clojure/clojure               {:mvn/version "1.11.1"}
-        io.github.judepayne/dictim {:git/tag "0.5.2" :git/sha "36e3b80"}
+ :deps {org.clojure/clojure              {:mvn/version "1.11.1"}
+        io.github.judepayne/dictim       {:git/tag "0.5.5" :git/sha "5313f41"}
         io.github.judepayne/dictim.graph {:git/tag "0.1.4" :git/sha "b062c62"}}}

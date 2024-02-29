@@ -1,47 +1,24 @@
-direction: right
-a: Dynamic View  {
-  db_a: Metadata DBS  {
-    shape: rectangle
+2LOD:   {
+  Finance:   {
+    app12872: Trade pad
   }
-  mt_a: Middle tier  {
-    shape: rectangle
-  }
-  tp_a: transpiler  {
-    shape: rectangle
-  }
-  gui_a: browser  {
-    shape: rectangle
-  }
-  user_a: User  {
-    shape: person
+  Risk:   {
+    app12876: Data Solar
   }
 }
-b: View and edit  {
-  db_b: Metadata DB  {
-    shape: rectangle
+FO:   {
+  Securities:   {
+    style.fill: green
+    app12873: Data Source
+    app12875: Data Solar
   }
-  mt_b: Middle tier  {
-    shape: rectangle
-  }
-  tp_b: transpiler  {
-    shape: rectangle
-  }
-  gui_b: Terrastruct gui  {
-    shape: rectangle
-  }
-  user_b: User  {
-    shape: person
+  Equities:   {
+    app12874: Joesph
   }
 }
-a.db_a -> a.mt_a: query data
-a.mt_a -> a.tp_a: data
-a.tp_a -> a.gui_a: d2
-a.gui_a -> a.user_a: view diagram
-b.db_b -> b.mt_b: query data
-b.mt_b -> b.tp_b: data
-b.tp_b -> b.gui_b: d2
-b.gui_b -> b.user_b: view & edit diagram
-b.user_b -> b.gui_b: update d2
-b.gui_b -> b.tp_b: updated d2
-b.tp_b -> b.mt_b: updated data
-b.mt_b -> b.db_b: store updated data
+FO.Equities.app12874 -> FO.Securities.app12875: security reference
+FO.Equities.app12874 -> 2LOD.Risk.app12876: quotes
+FO.Securities.app12875 -> FO.Securities.app12875: instructions
+FO.Equities.app12874 -> 2LOD.Finance.app12872: instructions
+FO.Securities.app12875 -> FO.Equities.app12874: client master
+FO.Securities.app12875 -> FO.Equities.app12874: allocations
