@@ -4,14 +4,14 @@
 
 
 ;; *****************************************
-;; *         Network Templates             *
+;; *           Diagram Specs               *
 ;; *****************************************
 
 ;; This is for building network diagrams - classic boxes and edges diagrams.
 ;; Templates look like this...
 
-;; {:data {:nodes *sequence-of-node-maps*
-;;         :edges *sequences-of-edge-maps*}
+;; {:nodes *sequence-of-node-maps*
+;;  :edges *sequences-of-edge-maps*
 ;;  :node->key :id
 ;;  :nodes {:labels *label-specs*
 ;;          :styles *style-specs*}
@@ -20,10 +20,14 @@
 
 ;;  ;;and optionally..
 
-;;  :node->cluster :dept
-;;  :cluster->parent "a-lookup-map"}
+;;  :node->container :dept
+;;  :container->parent "a-lookup-map"
+;;  :container->attrs "a-lookup-map"
+;;  }
 
-;; This template namespace allows for a dictim diagram to be specified simply with
+;; Please see lower down for an example diagram spec.
+
+;; This namespace allows for a dictim diagram to be specified simply with
 ;; only data; no functions required! The data part is made up of nodes and edges
 ;; where each node and each edge is just a Clojure map.
 ;; Styling and Labelling rules are called (style- and label-) specs and allow
@@ -343,7 +347,7 @@
        (apply assoc {} res#))))
 
 
-;; example disagram
+;; example diaagram spec
 (def ex-diagram
   {:nodes '({:id "app12872",
              :name "Trade pad",
