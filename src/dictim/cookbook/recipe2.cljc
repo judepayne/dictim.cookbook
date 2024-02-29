@@ -43,8 +43,17 @@
                       (filter (or (-> spec :filters :flow-filter-fn) identity)))
            directives (-> spec :directives)
            dictim ((-> spec :dictim-fn) nodes edges (-> spec :dictim-fn-params))
-           dictim' (if directives (cons directives dictim) dictim)]
-       (spit (-> spec :file-out) (apply c/d2 dictim'))))))
+           dictim' (if directives (cons directives dictim) dictim)
+           d2 (apply c/d2 dictim')]
+       (println "\n")
+       (clojure.pprint/pprint (clojure.walk/prewalk
+                               (fn [form] (if (string? form)
+                                            form #_(str "\"" form "\"")
+                                            form))
+                               dictim))
+       (println "\n")
+       (println d2)
+       (spit (-> spec :file-out) d2)))))
 
 
 ;; let's define a path to write the .d2 files out to:
@@ -63,6 +72,8 @@
 
 (def data (atom {}))
 
+;; Show show example apps in the repl and some flows
+(def my-apps (take 2 (apps)))
 
 
 ;; Generate some random diagrams, over and over.
@@ -116,7 +127,7 @@
                                                       {:fill "pink"}
 
                                                       (has? (:functions n) ["Quoting"])
-                                                      {:fill "red"}
+                                                      {:fill "green"}
 
                                                       (has? (:functions n) ["Order Mgt"])
                                                       {:fill "orange"}
@@ -137,7 +148,7 @@
   :dictim-fn g/graph->dictim
   :dictim-fn-params {:node->key :id
                      :node->attrs (fn [n] {:label (str (:name n))
-                                           #_:style #_(cond
+                                           :style (cond
                                                         (has? (:functions n) ["Pricing"])
                                                         {:fill "pink"}
 
@@ -157,7 +168,7 @@
                                                      :stroke-width 2}
 
                                                     :else {})})
-                     :node->cluster :owner
+                     :node->cluster :dept
                      :cluster->parent (fn [_] :bank)}
   :file-out path})
 
@@ -361,10 +372,10 @@
                                                       
                                                     :else {})})
                      :edge->attrs (fn [e] {:label (:data-type e)
-                                           :stroke "'#4eb8ed'"
-                                           :stroke-width "4"
-                                           :font-size "16"
-                                           :font-color "red"})
+                                           :style.stroke "'#4eb8ed'"
+                                           :style.stroke-width "4"
+                                           :style.font-size "16"
+                                           :style.font-color "red"})
                      :node->cluster :process
                      :cluster->parent (fn [_] "Process View")
                      :cluster->attrs (fn [c] (cond
@@ -472,7 +483,7 @@
                        :edge->attrs (fn [e] {:label (:data-type e)
                                              :style (cond
                                                       (= "orders" (:data-type e))
-                                                      {:stroke-dash "5"
+                                                      {:stroke-dash "10"
                                                        :animated "false"
                                                        :stroke "green"}
 
