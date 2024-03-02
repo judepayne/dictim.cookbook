@@ -1,6 +1,7 @@
 (ns dictim.cookbook.recipe5
   (:require [dictim.graph.core :as g]
-            [dictim.d2.compile :as c]))
+            [dictim.d2.compile :as c]
+            [clojure.data.json :as json]))
 
 
 ;; *****************************************
@@ -38,7 +39,7 @@
 ;; *****************************************
 
 
-(def comparators
+(def ^{:private true} comparators
   {:equals =
    :not-equals not=
    :contains some
@@ -70,7 +71,7 @@
 ;; [:or [:contains :business-functions "booking"][:> "tco" 1200000]]
 ;; means that only one or other condition should be true.
 
-(defn get*
+(defn- get*
   "A generalized version of get/ get-in.
    If k is a keyword/ string, performs a normal get from the map m, otherwise
    if k is a vector of keywords/ strings performs a get-in."
@@ -85,13 +86,13 @@
     :else (throw (Exception. (str "Key must be a keyword, string or vector of either.")))))
 
 
-(defn contains-vectors?
+(defn- contains-vectors?
   "Returns true if coll contains one or more vectors."
   [coll]
   (some vector? coll))
 
 
-(defmacro single-condition
+(defmacro ^{:private true} single-condition
   "Returns code that tests whether the condition is true for the item
    specified by sym."
   [sym condition]
@@ -113,7 +114,7 @@
        (comp# v-found# v#))))
 
 
-(defmacro condition
+(defmacro ^{:private true} condition
   "Returns code that tests whether the condition/s is/are true for the item
    specified by sym."
   [sym condition]
@@ -160,7 +161,7 @@
 ;; *           Spec Validation             *
 ;; *****************************************
 
-(defn valid-single-condition?
+(defn- valid-single-condition?
   [condition]
   (and
    ;; is a vector
@@ -173,7 +174,7 @@
    (= 3 (count condition))))
 
 
-(defn valid-condition?
+(defn- valid-condition?
   [condition]
   (if (and (vector? condition) (contains-vectors? condition))
     (and
@@ -194,13 +195,7 @@
            (every? map? lbl))))
 
 
-(defmacro dbg [body]
-  `(let [x# ~body]
-     (println "dbg:" '~body "=" x#)
-     x#))
-
-
-(defn specs-valid?
+(defn- specs-valid?
   [spec-type specs]
   (let [counts (map count specs)]
     (and
@@ -234,7 +229,7 @@
           conditional-specs))))))
 
 
-(defn put-last
+(defn- put-last
   [pred coll]
   "Puts the first item in coll that satisfies pred to the end."
   (let [splits (split-with (complement pred) coll)]
@@ -250,19 +245,19 @@
         (conj front (first (second splits)))))))
 
 
-(defn without-condition-spec?
+(defn- without-condition-spec?
   [spec]
   (= 1 (count spec)))
 
 
-(defn convert-without-condition-spec
+(defn- convert-without-condition-spec
   [spec]
   (if (without-condition-spec? spec)
     (list :else (first spec))
     spec))
 
 
-(defn prep-specs
+(defn- prep-specs
   "If there's an :else clause, ensure it's at the end."
   [spec-type specs]
   (if (not (specs-valid? spec-type specs))
@@ -272,7 +267,7 @@
          (map convert-without-condition-spec))))
 
 
-(defn prep-label-component
+(defn- prep-label-component
   "Preps a single part of a label instruction."
   [item label-instruction-component]
   (let [k (:key label-instruction-component)
@@ -293,7 +288,7 @@
                               " does not specify a key!"))))))
 
 
-(defn prep-label
+(defn- prep-label
   [item label-instruction]
   (cond
     (and (vector? label-instruction)
@@ -306,7 +301,7 @@
     :else nil))
 
 
-(defmacro specs
+(defmacro ^{:private true} specs
   "Convert specs into functions which are matched against the value stored
   in sym. spec-type must be either :label or :style."
   [sym spec-type specs]
@@ -323,7 +318,7 @@
      as-fns#))
 
 
-(defn first-true
+(defn- first-true
   "Returns the application of f on the first value whose resolved spec is true."
   ([resolved-spec] (first-true identity resolved-spec))
   ([f resolved-spec]
@@ -334,7 +329,7 @@
     resolved-spec)))
 
 
-(defmacro spec-fn
+(defmacro ^{:private true} spec-fn
   "Converts a node->attrs/ edge-attrs expression that use data to 
   express specs and conditions into a function."
   [m]
@@ -348,7 +343,7 @@
 
 
 ;; example diaagram spec
-(def ex-diagram
+(def ^{:private true} ex-diagram
   {:nodes '({:id "app12872",
              :name "Trade pad",
              :owner "Lakshmi",
@@ -399,7 +394,7 @@
    })
 
 
-(defn valid-diagram-spec?
+(defn- valid-diagram-spec?
   [diag]
   (cond
     (let [nds (-> diag :nodes)]
@@ -416,6 +411,10 @@
 
     :else true))
 
+
+;; *****************************************
+;; *             Public API                *
+;; *****************************************
 
 (defn network-diagram->d2
   "Takes a diagram spec and produces d2.
@@ -453,8 +452,53 @@
       (apply c/d2 dictim'))))
 
 
-(def path "samples/in.d2")
+(def ^{:private true} path "samples/in.d2")
 
 
 (defn out [diag]
   (spit path (network-diagram->d2 diag)))
+
+
+;; serialization/ deserialization of diagram specs
+
+
+
+(defn serialize-diagram
+  "Serializes a diagram spec to json."
+  [diagram-spec]
+  (json/write-str diagram-spec))
+
+
+(defn- convert-element [element]
+  (cond
+    (map? element)
+    (into {} (map (fn [[k v]] [k (keyword v)]) element))
+
+    (vector? element)
+    (conj (mapv keyword (take 2 element)) (last element))
+
+    :else element))
+
+
+(defn- convert-specs [specs]
+  (mapv #(mapv convert-element %) specs))
+
+
+(defn deserialize-diagram
+  "Properly deserializes the json representation of a diagram spec."
+  [json-text]
+  (json/read-str json-text
+                    :key-fn keyword
+                    :value-fn (fn [k v]
+                                (cond
+                                  (or (= k :labels) (= k :styles))
+                                  (convert-specs v)
+
+                                  (or (= k :node->container) (= k :node->key))
+                                  (keyword v)
+
+                                  (or (= k :container->parent) (= k :container->attrs))
+                                  (into {}
+                                        (map (fn [[k v]] [(name k) v]) v))
+
+                                  :else v))))
